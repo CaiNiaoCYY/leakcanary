@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.squareup.leakcanary.core.BuildConfig
 import com.squareup.leakcanary.core.R
+import leakcanary.AppWatcher
 import leakcanary.LeakCanary
 import leakcanary.internal.DebuggerControl
 import leakcanary.internal.activity.screen.AboutScreen.HeapDumpPolicy.HeapDumpStatus.DISABLED_BY_DEVELOPER
 import leakcanary.internal.activity.screen.AboutScreen.HeapDumpPolicy.HeapDumpStatus.DISABLED_DEBUGGER_ATTACHED
 import leakcanary.internal.activity.screen.AboutScreen.HeapDumpPolicy.HeapDumpStatus.DISABLED_RUNNING_TESTS
 import leakcanary.internal.activity.screen.AboutScreen.HeapDumpPolicy.HeapDumpStatus.ENABLED
+import leakcanary.internal.activity.screen.AboutScreen.HeapDumpPolicy.HeapDumpStatus.NOT_INSTALLED
 import leakcanary.internal.navigation.Screen
 import leakcanary.internal.navigation.activity
 import leakcanary.internal.navigation.inflate
@@ -40,6 +42,7 @@ internal class AboutScreen : Screen() {
 
   private fun getHeapDumpStatusMessage(resources: Resources) =
     when (getHeapDumpStatus(resources)) {
+      NOT_INSTALLED -> resources.getString(R.string.leak_canary_heap_dump_not_installed_text)
       ENABLED -> resources.getString(R.string.leak_canary_heap_dump_enabled_text)
       DISABLED_DEBUGGER_ATTACHED -> String.format(
           resources.getString(R.string.leak_canary_heap_dump_disabled_text),
@@ -60,10 +63,14 @@ internal class AboutScreen : Screen() {
       ENABLED,
       DISABLED_DEBUGGER_ATTACHED,
       DISABLED_BY_DEVELOPER,
-      DISABLED_RUNNING_TESTS
+      DISABLED_RUNNING_TESTS,
+      NOT_INSTALLED
     }
 
     fun getHeapDumpStatus(resources: Resources): HeapDumpStatus {
+      if (!AppWatcher.isInstalled) {
+        return NOT_INSTALLED
+      }
       val config = LeakCanary.config
       if (!config.dumpHeap) {
         if (isRunningTests(resources)) {
