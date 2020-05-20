@@ -31,7 +31,7 @@ internal object FragmentDestroyWatcher {
 
   private const val ANDROIDX_FRAGMENT_CLASS_NAME = "androidx.fragment.app.Fragment"
   private const val ANDROIDX_FRAGMENT_DESTROY_WATCHER_CLASS_NAME =
-    "leakcanary.internal.AndroidXFragmentDestroyWatcher"
+    "leakcanary.internal.LiveAndroidXFragmentDestroyWatcher"
 
   // Using a string builder to prevent Jetifier from changing this string to Android X Fragment
   @Suppress("VariableNaming", "PropertyName")
@@ -39,7 +39,7 @@ internal object FragmentDestroyWatcher {
     StringBuilder("android.").append("support.v4.app.Fragment")
         .toString()
   private const val ANDROID_SUPPORT_FRAGMENT_DESTROY_WATCHER_CLASS_NAME =
-    "leakcanary.internal.AndroidSupportFragmentDestroyWatcher"
+    "leakcanary.internal.LiveAndroidSupportFragmentDestroyWatcher"
 
   fun install(
     application: Application,
@@ -50,7 +50,7 @@ internal object FragmentDestroyWatcher {
 
     if (SDK_INT >= O) {
       fragmentDestroyWatchers.add(
-          AndroidOFragmentDestroyWatcher(objectWatcher, configProvider)
+          LiveAndroidOFragmentDestroyWatcher(objectWatcher, configProvider)
       )
     }
 

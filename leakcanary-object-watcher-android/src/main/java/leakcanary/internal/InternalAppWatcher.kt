@@ -70,7 +70,7 @@ internal object InternalAppWatcher {
     InternalAppWatcher.application = application
 
     val configProvider = { AppWatcher.config }
-    ActivityDestroyWatcher.install(application, objectWatcher, configProvider)
+    LiveActivityDestroyWatcher.install(application, objectWatcher, configProvider)
     FragmentDestroyWatcher.install(application, objectWatcher, configProvider)
     onAppWatcherInstalled(application)
   }
